@@ -95,6 +95,32 @@ public class ToDoDatabaseTest {
 		todoDatabase.deleteToDo(conn, secondToDoText);
 	}
 
+	@Test
+	public void testToggleToDo() throws Exception{
+		Connection conn = DriverManager.getConnection(ToDoDatabase.DB_URL);
+		String firstToDo = "ToDo-1-toggleTest";
+		ArrayList<ToDoItem> todo = todoDatabase.selectToDos(conn);
+
+		todoDatabase.insertToDo(conn, firstToDo);
+
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM todos WHERE text = ?");
+		stmt.setString(1, firstToDo);
+
+		stmt.execute();
+
+		todo = todoDatabase.selectToDos(conn);
+
+		boolean thing = todo.get(0).isDone;
+
+		assertTrue(todo.get(0).isDone == thing);
+
+		todoDatabase.toggleToDo(conn, todo.get(0).id);
+
+		assertFalse(todo.get(0).isDone == !thing);
+
+		todoDatabase.deleteToDo(conn, firstToDo);
+
+	}
 
 }
 
