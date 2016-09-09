@@ -105,19 +105,14 @@ public class ToDoDatabaseTest {
 
 		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM todos WHERE text = ?");
 		stmt.setString(1, firstToDo);
-
 		stmt.execute();
 
 		todo = todoDatabase.selectToDos(conn);
 
-		boolean thing = todo.get(0).isDone;
-
-		assertTrue(todo.get(0).isDone == thing);
-
+		boolean doneness = todo.get(0).isDone;
+		assertTrue(todo.get(0).isDone == doneness);
 		todoDatabase.toggleToDo(conn, todo.get(0).id);
-
-		assertFalse(todo.get(0).isDone == !thing);
-
+		assertFalse(todo.get(0).isDone == !doneness);
 		todoDatabase.deleteToDo(conn, firstToDo);
 
 	}

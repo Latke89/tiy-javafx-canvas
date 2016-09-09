@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ResourceBundle;
@@ -28,11 +29,27 @@ public class Controller implements Initializable {
     ObservableList<ToDoItem> todoItems = FXCollections.observableArrayList();
     ArrayList<ToDoItem> savableList = new ArrayList<ToDoItem>();
     String fileName = "todos.json";
-
+    ToDoDatabase myDatabase;
     public String username;
+    Connection conn;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            if (myDatabase == null) {
+                myDatabase = new ToDoDatabase();
+                myDatabase.init();
+            }
+            conn = DriverManager.getConnection(myDatabase.DB_URL);
+            myDatabase.selectToDos(conn);
+            for (ToDoItem item : todoItems) {
+                item = null;
+            }
+
+            } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
 
 //        System.out.print("Please enter your name: ");
 //        Scanner inputScanner = new Scanner(System.in);
@@ -49,6 +66,7 @@ public class Controller implements Initializable {
 //                todoItems.add(item);
 //            }
 //        }
+
 
         todoList.setItems(todoItems);
     }
@@ -67,6 +85,11 @@ public class Controller implements Initializable {
     public void addItem() {
         System.out.println("Adding item ...");
         todoItems.add(new ToDoItem(todoText.getText()));
+        try {
+            myDatabase.insertToDo(conn, todoText.getText());
+        } catch (SQLException addEx) {
+            addEx.printStackTrace();
+        }
         todoText.setText("");
     }
 
@@ -79,6 +102,12 @@ public class Controller implements Initializable {
     public void toggleItem() {
         System.out.println("Toggling item ...");
         ToDoItem todoItem = (ToDoItem)todoList.getSelectionModel().getSelectedItem();
+        try {
+            myDatabase.toggleToDo(conn, todoItem.id);
+        } catch (SQLException toggleEx) {
+            toggleEx.printStackTrace();
+        }
+
         if (todoItem != null) {
             todoItem.isDone = !todoItem.isDone;
             todoList.setItems(null);
