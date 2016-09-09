@@ -42,7 +42,12 @@ public class Controller implements Initializable {
                 myDatabase.init();
             }
             conn = DriverManager.getConnection(myDatabase.DB_URL);
-            myDatabase.selectToDos(conn);
+            savableList = myDatabase.selectToDos(conn);
+            for (ToDoItem item : savableList) {
+                todoItems.add(item);
+            }
+
+
             for (ToDoItem item : todoItems) {
                 item = null;
             }

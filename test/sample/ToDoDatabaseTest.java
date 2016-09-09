@@ -99,7 +99,7 @@ public class ToDoDatabaseTest {
 	public void testToggleToDo() throws Exception{
 		Connection conn = DriverManager.getConnection(ToDoDatabase.DB_URL);
 		String firstToDo = "ToDo-1-toggleTest";
-		ArrayList<ToDoItem> todo = todoDatabase.selectToDos(conn);
+		ArrayList<ToDoItem> todo;
 
 		todoDatabase.insertToDo(conn, firstToDo);
 
@@ -112,7 +112,7 @@ public class ToDoDatabaseTest {
 		boolean doneness = todo.get(0).isDone;
 		assertTrue(todo.get(0).isDone == doneness);
 		todoDatabase.toggleToDo(conn, todo.get(0).id);
-		assertFalse(todo.get(0).isDone == !doneness);
+		assertTrue(todo.get(0).isDone == doneness);
 		todoDatabase.deleteToDo(conn, firstToDo);
 
 	}
