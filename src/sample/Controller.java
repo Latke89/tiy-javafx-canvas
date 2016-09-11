@@ -31,6 +31,8 @@ public class Controller implements Initializable {
     String fileName = "todos.json";
     ToDoDatabase myDatabase;
     public String username;
+    String name;
+    int userID;
     Connection conn;
 
 
@@ -43,6 +45,11 @@ public class Controller implements Initializable {
             }
             conn = DriverManager.getConnection(myDatabase.DB_URL);
             savableList = myDatabase.selectToDos(conn);
+
+            ToDoUser myUser = new ToDoUser(name, username);
+
+            userID = myDatabase.insertUser(conn, name, username);
+
             for (ToDoItem item : savableList) {
                 todoItems.add(item);
             }
@@ -91,7 +98,7 @@ public class Controller implements Initializable {
         System.out.println("Adding item ...");
         todoItems.add(new ToDoItem(todoText.getText()));
         try {
-            myDatabase.insertToDo(conn, todoText.getText());
+            myDatabase.insertToDo(conn, todoText.getText(), userID);
         } catch (SQLException addEx) {
             addEx.printStackTrace();
         }
