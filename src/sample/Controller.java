@@ -47,18 +47,22 @@ public class Controller implements Initializable {
             conn = DriverManager.getConnection(myDatabase.DB_URL);
             savableList = myDatabase.selectToDos(conn);
 
-			System.out.println("Select from users/Create new account");
+			// Select from users/Create new account
 			System.out.println("For new account, enter \"new\"");
 			System.out.println("For a list of users, enter \"users\"");
 			String answer = inputScanner.nextLine();
+
 			if(answer.equalsIgnoreCase("new")) {
 				System.out.println("Please enter your first and last name");
 				name = inputScanner.nextLine();
 				System.out.println("Please input your e-mail address");
 				userName = inputScanner.nextLine();
 				userID = myDatabase.insertUser(conn, userName, name);
-				ToDoUser myUser = new ToDoUser(name, userName, userID);
-			} else if (answer.equalsIgnoreCase("users")) {
+				System.out.println();
+				ToDoUser myUser = new ToDoUser(userName, name, userID);
+			}
+			else if (answer.equalsIgnoreCase("users")) {
+
 				System.out.println("Please choose a user from the list");
 				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users");
 				ResultSet results = stmt.executeQuery();
@@ -71,17 +75,23 @@ public class Controller implements Initializable {
 				System.out.println("====================");
 
 				userName = inputScanner.nextLine();
-				myDatabase.selectUser(conn, userName);
+				userID = myDatabase.selectUser(conn, userName);
+				System.out.println(userID);
+				ArrayList<ToDoItem> myTodos = myDatabase.selectToDosForUser(conn, userID);
+				for(ToDoItem item : myTodos) {
+					todoItems.add(item);
+				}
+
 			}
 
-            for (ToDoItem item : savableList) {
-                todoItems.add(item);
-            }
+//            for (ToDoItem item : savableList) {
+//                todoItems.add(item);
+//            }
 
 
-            for (ToDoItem item : todoItems) {
-                item = null;
-            }
+//            for (ToDoItem item : todoItems) {
+//                item = null;
+//            }
 
             } catch (SQLException exception) {
             exception.printStackTrace();

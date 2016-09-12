@@ -89,11 +89,12 @@ public class ToDoDatabase {
 		return items;
 	}
 
-	public void selectUser(Connection conn, String userName) throws SQLException{
+	public int selectUser(Connection conn, String userName) throws SQLException{
 		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
 		stmt.setString(1, userName);
-		stmt.executeQuery();
-
+		ResultSet result = stmt.executeQuery();
+		result.next();
+		return result.getInt("id");
 
 	}
 
