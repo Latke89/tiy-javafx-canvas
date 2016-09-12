@@ -7,11 +7,11 @@ public class ToDoUser {
 
 	String fullName;
 	String userName;
+	int userID;
 
-	public ToDoUser(String fullName, String userName) {
+	public ToDoUser(String userName, String fullName, int userID) {
 		this.fullName = fullName;
 		this.userName = userName;
+		this.userID = userID;
 	}
-
-
 }

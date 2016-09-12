@@ -30,7 +30,7 @@ public class Controller implements Initializable {
     ArrayList<ToDoItem> savableList = new ArrayList<ToDoItem>();
     String fileName = "todos.json";
     ToDoDatabase myDatabase;
-    public String username;
+	String userName;
     String name;
     int userID;
     Connection conn;
@@ -38,6 +38,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    	Scanner inputScanner = new Scanner(System.in);
         try {
             if (myDatabase == null) {
                 myDatabase = new ToDoDatabase();
@@ -46,9 +47,32 @@ public class Controller implements Initializable {
             conn = DriverManager.getConnection(myDatabase.DB_URL);
             savableList = myDatabase.selectToDos(conn);
 
-            ToDoUser myUser = new ToDoUser(name, username);
+			System.out.println("Select from users/Create new account");
+			System.out.println("For new account, enter \"new\"");
+			System.out.println("For a list of users, enter \"users\"");
+			String answer = inputScanner.nextLine();
+			if(answer.equalsIgnoreCase("new")) {
+				System.out.println("Please enter your first and last name");
+				name = inputScanner.nextLine();
+				System.out.println("Please input your e-mail address");
+				userName = inputScanner.nextLine();
+				userID = myDatabase.insertUser(conn, userName, name);
+				ToDoUser myUser = new ToDoUser(name, userName, userID);
+			} else if (answer.equalsIgnoreCase("users")) {
+				System.out.println("Please choose a user from the list");
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users");
+				ResultSet results = stmt.executeQuery();
 
-            userID = myDatabase.insertUser(conn, name, username);
+				System.out.println("====================");
+				while (results.next()) {
+					String username = results.getString("username");
+					System.out.println(username);
+				}
+				System.out.println("====================");
+
+				userName = inputScanner.nextLine();
+				myDatabase.selectUser(conn, userName);
+			}
 
             for (ToDoItem item : savableList) {
                 todoItems.add(item);
